@@ -193,8 +193,10 @@ public class main extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        FileFilter filter = new FileNameExtensionFilter("C Zero", "czero");
         JFileChooser fileChooser = new JFileChooser();
-        StringBuffer buffer = new StringBuffer();
+        
+        fileChooser.addChoosableFileFilter(filter);
         int resultVal = fileChooser.showOpenDialog(this);
         
         if (resultVal == JFileChooser.APPROVE_OPTION) {
@@ -210,7 +212,6 @@ public class main extends javax.swing.JFrame {
                 
                 bufferReader.close();
                 
-                int tabCount = jTabbedPane1.getTabCount();
                 ImageIcon icon = new ImageIcon("images/new-tab.png");
                 JTextArea textArea = new JTextArea();
                 textArea.isEditable();
