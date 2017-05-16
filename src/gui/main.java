@@ -97,6 +97,11 @@ public class main extends javax.swing.JFrame {
         jMenu2.setText("Tools");
 
         jMenuItem3.setText("Compile");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem3);
 
         jMenuBar1.add(jMenu2);
@@ -158,7 +163,8 @@ public class main extends javax.swing.JFrame {
 
         btnClose.addActionListener(myCloseActionHandler);
     }//GEN-LAST:event_jMenuItem2ActionPerformed
-
+    
+    // save file
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         String text;
         if (jTabbedPane1.getSelectedComponent() == null)
@@ -191,7 +197,8 @@ public class main extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-
+    
+    // open file
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         FileFilter filter = new FileNameExtensionFilter("C Zero", "czero");
         JFileChooser fileChooser = new JFileChooser();
@@ -247,6 +254,16 @@ public class main extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    // compiler
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        String program;
+        if (jTabbedPane1.getSelectedComponent() == null)
+            return;
+        program = ((JTextArea) jTabbedPane1.getSelectedComponent()).getText();
+        
+        // aqui van las varas de compilacion
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
     
     public class MyCloseActionHandler implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
@@ -267,7 +284,7 @@ public class main extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
