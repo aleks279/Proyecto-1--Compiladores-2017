@@ -15,6 +15,9 @@ precedence left PLUS, MINUS;
 precedence left MUL, DIV;
 precedence left ASSIGN;
 
+
+
+
 expr          ::= expr:e1 PLUS expr:e2 
                     {: RESULT = new Plus(e1, e2); :}
                 | expr:e1 MINUS expr:e2
@@ -32,3 +35,19 @@ expr          ::= expr:e1 PLUS expr:e2
                 | NUMBER:n
                     {: RESULT = new Literal(n); :}
                 ;
+
+
+cond        ::= expr:e1  GREATER expr:e2
+                    {: RESULT new Greater(e1,e2); :}
+              | expr:e1 LESS expr:e2
+                    {: RESULT new Less(e1,e2); :}
+              | expr:e1 EQUAL expr:e2
+                    {: RESULT new Equal(e1,e2); :}
+              | expr:e1  expr:e2
+                    {: RESULT new (e1,e2); :}
+              | expr:e1  expr:e2
+                    {: RESULT new (e1,e2); :}
+              | expr:e1  expr:e2
+                    {: RESULT new (e1,e2); :}
+              | expr:e1  expr:e2
+                    {: RESULT new (e1,e2); :}
