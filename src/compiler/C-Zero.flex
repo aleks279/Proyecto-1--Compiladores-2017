@@ -31,6 +31,7 @@ Identifier     = {Letter} ({Letter}|{Digit})*
 <YYINITIAL> { 
     {Number}        { return symbol(sym.NUMBER, new Integer(Integer.parseInt(yytext()))); }
     {Identifier}    { return symbol(sym.IDENT, yytext()); }
+    "??"             { return symbol(sym.QUOTE); }
     "+"             { return symbol(sym.PLUS); }
     "-"             { return symbol(sym.MINUS); }
     "*"             { return symbol(sym.MUL); }
@@ -38,23 +39,24 @@ Identifier     = {Letter} ({Letter}|{Digit})*
     "("             { return symbol(sym.LPAREN); }
     ")"             { return symbol(sym.RPAREN); }
     "{"             { return symbol(sym.LBRACES); }
+    "{"             { return symbol(sym.LBRACES); }
     "}"             { return symbol(sym.RBRACES); }
     ";"             { return symbol(sym.SEMICOLON); }
     "="             { return symbol(sym.ASSIGN); }
-    "<"             { return symbol(sym.LESS); }
     ">"             { return symbol(sym.GREATER); }
+    "<"             { return symbol(sym.LESS); }
     "=="            { return symbol(sym.EQUAL); }
     "¡="            { return symbol(sym.UNEQUAL); }
     "&&"            { return symbol(sym.AND); }
     "||"            { return symbol(sym.OR); }
-    "main"          { return symbol(sym.KEYWORD); }
-    "if"            { return symbol(sym.KEYWORD); }
-    "else"          { return symbol(sym.KEYWORD); }
-    "while"         { return symbol(sym.KEYWORD); }
-    "putw"          { return symbol(sym.KEYWORD); }
-    "puts"          { return symbol(sym.KEYWORD); }
-    "int"           { return symbol(sym.KEYWORD); }
-    "break"         { return symbol(sym.KEYWORD); }
+    "main"          { return symbol(sym.MAIN); }
+    "if"            { return symbol(sym.IF); }
+    "else"          { return symbol(sym.ELSE); }
+    "while"         { return symbol(sym.WHILE); }
+    "putw"          { return symbol(sym.PUTW); }
+    "puts"          { return symbol(sym.PUTS); }
+    "int"           { return symbol(sym.INT); }
+    "break"         { return symbol(sym.BREAK); }
 
     {WhiteSpace} {}
 }
