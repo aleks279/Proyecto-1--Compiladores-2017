@@ -9,19 +9,19 @@ package tree;
  *
  * @author Ale
  */
-public class If {
-        Cond cond;
-	Stmt stmt;
+public class VarList {
+    Environment lst;
 	
-	public If(Cond c, Stmt s)
+	public VarList(String id)
 	{
-		cond = c;
-		stmt = s;
+		lst = new Environment();
+		lst.set(id,0);
 	}
 	
-	public void run(Environment e)
+	public void add(String id)
 	{
-		if (cond.run(e))
-			stmt.run(e);
+		lst.set(id,0);
 	}
+	
+	public Environment e() { return lst; }
 }

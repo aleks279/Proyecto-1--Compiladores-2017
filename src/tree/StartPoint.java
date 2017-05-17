@@ -9,19 +9,14 @@ package tree;
  *
  * @author Ale
  */
-public class If {
-        Cond cond;
-	Stmt stmt;
-	
-	public If(Cond c, Stmt s)
-	{
-		cond = c;
-		stmt = s;
-	}
-	
-	public void run(Environment e)
-	{
-		if (cond.run(e))
-			stmt.run(e);
-	}
+public class StartPoint {
+    Body body;
+    
+    public StartPoint (Body b){
+        body = b;
+    }
+    
+    public void go(){
+        body.run();
+    }
 }

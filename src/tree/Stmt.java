@@ -10,5 +10,5 @@ package tree;
  * @author Ale
  */
 public interface Stmt {
-    public abstract void stmt(Environment e);
+    public void run(Environment e);
 }

@@ -31,12 +31,14 @@ Identifier     = {Letter} ({Letter}|{Digit})*
 <YYINITIAL> { 
     {Number}        { return symbol(sym.NUMBER, new Integer(Integer.parseInt(yytext()))); }
     {Identifier}    { return symbol(sym.IDENT, yytext()); }
+    "??"             { return symbol(sym.QUOTE); }
     "+"             { return symbol(sym.PLUS); }
     "-"             { return symbol(sym.MINUS); }
     "*"             { return symbol(sym.MUL); }
     "/"             { return symbol(sym.DIV); }
     "("             { return symbol(sym.LPAREN); }
     ")"             { return symbol(sym.RPAREN); }
+    "{"             { return symbol(sym.LBRACES); }
     "{"             { return symbol(sym.LBRACES); }
     "}"             { return symbol(sym.RBRACES); }
     ";"             { return symbol(sym.SEMICOLON); }

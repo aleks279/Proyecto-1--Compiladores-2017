@@ -5,10 +5,18 @@ import java_cup.runtime.*;
 import tree.*;
 
 terminal            PLUS, MINUS, MUL, DIV, ASSIGN;
-terminal            LPAREN, RPAREN;
+terminal            GREATER, LESS, EQUAL, UNEQUAL;
+terminal            AND, OR, MAIN, PUTW, PUTS, INT, QUOTE;
+terminal            IF, ELSE, WHILE, BREAK;
+terminal            LPAREN, RPAREN, LBRACES, RBRACES, SEMICOLON;
+
 terminal Integer    NUMBER;
 terminal String     IDENT;
-
+non terminal StartPoint startpoint;
+non terminal Body body
+non terminal Cond condition;
+non terminal Stmt statement;
+non terminal VarList vars;
 non terminal Tree expr;
 
 precedence left PLUS, MINUS;
@@ -16,6 +24,39 @@ precedence left MUL, DIV;
 precedence left ASSIGN;
 
 
+startpoint    ::= body:b
+                    {: StartPoint sp = new StartPoint(b);
+                        sp.go();
+                     :}
+
+body          ::= vars:v MAIN LPAREN RPAREN LBRACE statement:s RBRACE
+                    {: RESULT = new Body(v, s) :}
+
+vars          ::= INT IDENT:i
+		  	{: RESULT = new VarLst(i); :}
+		| vars :vl SEMICOLON INT IDENT:i
+			{: vl.add(i); RESULT = vl; :}
+		;
+
+statement     ::= IDENT:i ASSIGN expr:e
+		  	{: RESULT = new Assignment(i,e); :}
+		| IF LPAREN condition:c RPAREN LBRACE  statement:s RBRACE
+			{: RESULT = new If(c,s); :}
+                /*| IF LPAREN condition:c RPAREN LBRACE  statement:s RBRACE ELSE
+			{: RESULT = new If(c,s); :}*/
+		| WHILE LPAREN condition:c RPAREN LBRACE statement:s RBRACE
+			{: RESULT = new While(c,s); :}
+		| PUTW LPAREN expr:e RPAREN
+			{: RESULT = new Print(e); :}
+                | PUTS LPAREN QUOTE IDENT:i QUOTE RPAREN
+			{: RESULT = new PrintS(i); :}
+		;
+
+stmt_lst       ::= statement:s
+		  	{: RESULT = new StmtLst(s); :}
+		| stmt_lst:sl SEMI statement:s
+			{: sl.add(s); RESULT = sl; :}
+		;
 
 
 expr          ::= expr:e1 PLUS expr:e2 
@@ -43,7 +84,7 @@ cond        ::= expr:e1  GREATER expr:e2
                     {: RESULT new Less(e1,e2); :}
               | expr:e1 EQUAL expr:e2
                     {: RESULT new Equal(e1,e2); :}
-              | expr:e1  expr:e2
+              | expr:e1 UNEQUAL expr:e2
                     {: RESULT new (e1,e2); :}
               | expr:e1  expr:e2
                     {: RESULT new (e1,e2); :}

@@ -10,6 +10,6 @@ package tree;
  * @author Ale
  */
 public interface Cond {
-    public abstract boolean run(Environment e);
+    public boolean run(Environment e);
     
 }
