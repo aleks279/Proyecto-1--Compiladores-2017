@@ -18,6 +18,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import compiler.Compiler;
+
 /**
  *
  * @author Saul
@@ -263,6 +265,8 @@ public class main extends javax.swing.JFrame {
         program = ((JTextArea) jTabbedPane1.getSelectedComponent()).getText();
         
         // aqui van las varas de compilacion
+        Compiler comp = new Compiler(program);
+        comp.compile();
     }//GEN-LAST:event_jMenuItem3ActionPerformed
     
     public class MyCloseActionHandler implements ActionListener {
