@@ -1,2 +1,5 @@
 /nbproject/private/
 /build/
+/src/compiler/Yylex.java
+/src/compiler/sym.java
+/src/compiler/parser.java
