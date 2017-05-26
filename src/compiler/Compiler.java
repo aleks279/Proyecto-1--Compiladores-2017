@@ -22,11 +22,27 @@ public class Compiler {
     
     public void compile() {
         try {
-            String calculatorFlex = "./src/compiler/C-zero.flex";
-            File jflexFile = new File(calculatorFlex);
-
+            // generate lexer
+            String czeroFlex = "./src/compiler/C-zero.flex";
+            File jflexFile = new File(czeroFlex);
             jflex.Main.generate(jflexFile);
-
+            
+            // generate parser and sym
+            String options[] = new String[7];
+            options[0] = "-destdir";
+            options[1] = "src/compiler";
+            options[2] = "-symbols"; 
+            options[3] = "sym";
+            options[4] = "-parser";         
+            options[5] = "parser";
+            
+            options[6] = "src/compiler/C-Zero.cup";
+            
+            try {
+                java_cup.Main.main(options);
+            } catch (Exception ex) {
+                System.out.print(ex);
+            }
 //            while (true) {
 //                String st = this.program;
 //                Environment env = new Environment();
