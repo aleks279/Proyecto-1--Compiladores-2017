@@ -15,6 +15,14 @@ import java_cup.runtime.*;
     private Symbol symbol(int type, Object value) {
         return new Symbol(type, yyline, yycolumn, value);
     }
+    public String currentLex(){
+        int line = yyline + 1;
+        int column = yycolumn + 1;
+        return "()";
+
+    public int line(){
+        return yyline+1;
+    }
 %}
 
 LineTerminator = \r|\n|\r\n
@@ -25,13 +33,13 @@ Digit          = [0-9]
 Number         = {Digit} {Digit}*
 Letter         = [a-zA-Z]
 Identifier     = {Letter} ({Letter}|{Digit})* 
-
+DoubleQuote    = [^"] 
 %%
 
 <YYINITIAL> { 
     {Number}        { return symbol(sym.NUMBER, new Integer(Integer.parseInt(yytext()))); }
     {Identifier}    { return symbol(sym.IDENT, yytext()); }
-    "??"             { return symbol(sym.QUOTE); }
+    {DoubleQuote}   { return symbol(sym.QUOTE); }
     "+"             { return symbol(sym.PLUS); }
     "-"             { return symbol(sym.MINUS); }
     "*"             { return symbol(sym.MUL); }
