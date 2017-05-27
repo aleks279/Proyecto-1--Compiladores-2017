@@ -23,7 +23,7 @@ public class Compiler {
     public void compile() {
         try {
             // generate lexer
-            String czeroFlex = "./src/compiler/C-zero.flex";
+            String czeroFlex = "./src/compiler/c0.flex";
             File jflexFile = new File(czeroFlex);
             jflex.Main.generate(jflexFile);
             
@@ -36,7 +36,7 @@ public class Compiler {
             options[4] = "-parser";         
             options[5] = "parser";
             
-            options[6] = "src/compiler/C-Zero.cup";
+            options[6] = "src/compiler/c0.cup";
             
             try {
                 java_cup.Main.main(options);

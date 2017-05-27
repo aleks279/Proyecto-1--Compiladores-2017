@@ -11,6 +11,7 @@ terminal            IF, ELSE, WHILE, BREAK;
 terminal            LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
 
 terminal Integer    NUMBER;
+terminal String     STRING;
 terminal String     IDENT;
 non terminal StartPoint startpoint;
 non terminal Body body;

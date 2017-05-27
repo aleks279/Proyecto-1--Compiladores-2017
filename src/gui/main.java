@@ -172,7 +172,7 @@ public class main extends javax.swing.JFrame {
         if (jTabbedPane1.getSelectedComponent() == null)
             return;
         text = ((JTextArea) jTabbedPane1.getSelectedComponent()).getText();
-        FileFilter filter = new FileNameExtensionFilter("C Zero", "czero");
+        FileFilter filter = new FileNameExtensionFilter("C Zero", "c0");
         JFileChooser fileChooser = new JFileChooser();
         
         fileChooser.addChoosableFileFilter(filter);
@@ -202,7 +202,7 @@ public class main extends javax.swing.JFrame {
     
     // open file
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        FileFilter filter = new FileNameExtensionFilter("C Zero", "czero");
+        FileFilter filter = new FileNameExtensionFilter("C Zero", "c0");
         JFileChooser fileChooser = new JFileChooser();
         
         fileChooser.addChoosableFileFilter(filter);
