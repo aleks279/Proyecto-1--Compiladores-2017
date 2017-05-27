@@ -29,15 +29,11 @@ InputCharacter = [^\r\n]
 WhiteSpace    = {LineTerminator} | [ \t\f]
 
 Digit          = [0-9]
-Number         = {Digit} {Digit}*
 Letter         = [A-Za-z_]
-Identifier     = {Letter} ({Letter}|{Digit})* 
 String         = \"([\x20-\x21\x23-\xFE])*\"
 
 %%
 
-{Number}        { return symbol(sym.NUMBER, new Integer(Integer.parseInt(yytext()))); }
-{Identifier}    { return symbol(sym.IDENT, yytext()); }
 "+"             { return symbol(sym.PLUS); }
 "-"             { return symbol(sym.MINUS); }
 "*"             { return symbol(sym.MUL); }
@@ -62,7 +58,10 @@ String         = \"([\x20-\x21\x23-\xFE])*\"
 "puts"          { return symbol(sym.PUTS); }
 "int"           { return symbol(sym.INT); }
 "break"         { return symbol(sym.BREAK); }
+{String}        { return symbol(sym.STRING, yytext()); }
+{Letter}({Letter}|{Digit})*     { return symbol(sym.ID, yytext()); }
+{Digit}*        { return symbol(sym.INTEGER, yytext()); }
 
-{WhiteSpace} {}
+({WhiteSpace}|{LineTerminator}|{WhiteSpace})+   {  }
 
 .|\n            { throw new Error("Illegal character <" + yytext() + ">");}
