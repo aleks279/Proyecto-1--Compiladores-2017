@@ -16,6 +16,7 @@ public class Symbol {
     Type type;
     String name;
     boolean constant;
+    private int address;
     
     public Symbol(String pName, Type pType) {
         this(pName, pType, false);
@@ -25,6 +26,13 @@ public class Symbol {
         this.name = pName;
         this.type = pType;
         this.constant = pConstant;
+    }
+    
+    public Symbol(String pName, Type pType, boolean pConstant, int pAddress) {
+        this.name = pName;
+        this.type = pType;
+        this.constant = pConstant;
+        this.address = pAddress;
     }
     
     public Type getType() {
@@ -37,5 +45,13 @@ public class Symbol {
     
     public boolean isConstant() {
         return this.constant;
+    }
+    
+    public int getAddress() {
+        return this.address;
+    }
+    
+    public void setAddress(int pAddress) {
+        this.address = pAddress;
     }
 }

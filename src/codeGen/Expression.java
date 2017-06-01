@@ -3,20 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tree;
+package codeGen;
 
 /**
  *
- * @author Ale
+ * @author Saul
  */
-public class StartPoint {
-    Body body;
+public class Expression {
+    private int address;
     
-    public StartPoint (Body b){
-        body = b;
+    public Expression(int pAddress) {
+        this.address = pAddress;
     }
     
-    public void go(){
-        body.run();
+    int getAddress() {
+        return this.address;
     }
 }

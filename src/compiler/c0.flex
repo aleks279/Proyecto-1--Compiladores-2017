@@ -56,8 +56,8 @@ String         = \"([\x20-\x21\x23-\xFE])*\"
 "int"           { return symbol(sym.INT); }
 "break"         { return symbol(sym.BREAK); }
 {String}        { return symbol(sym.STRING, yytext()); }
-{Letter}({Letter}|{Digit})*     { return symbol(sym.IDENT, yytext()); }
-{Digit}*        { return symbol(sym.INT, yytext()); }
+{Letter}({Letter}|{Digit})*     { return symbol(sym.ID, yytext()); }
+{Digit}+        { return symbol(sym.INT, yytext()); }
 
 ({WhiteSpace}|{LineTerminator}|{WhiteSpace})+   {  }
 
