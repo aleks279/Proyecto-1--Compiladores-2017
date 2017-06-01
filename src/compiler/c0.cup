@@ -2,98 +2,141 @@ package compiler;
 
 
 import java_cup.runtime.*;
-import tree.*;
+import codeGen.*;
+import symTable.*;
+import types.*;
 
-terminal            PLUS, MINUS, MUL, DIV, ASSIGN;
-terminal            GREATER, LESS, EQUAL, UNEQUAL;
-terminal            AND, OR, MAIN, PUTW, PUTS, INT, QUOTE;
-terminal            IF, ELSE, WHILE, BREAK;
-terminal            LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
+action code {:
+    public int addressCounter = 65535;
+    
+    void initialize() {
+        // Sym table stack initializer
+        SymTable.initialize();
 
-terminal Integer    NUMBER;
-terminal String     STRING;
-terminal String     IDENT;
-non terminal StartPoint startpoint;
-non terminal Body body;
-non terminal Cond condition;
-non terminal Stmt statement;
-non terminal statementList stmt_lst;
-non terminal VarList vars;
-non terminal Tree expr;
+        // Initialize types
+        Type.createTypes();
+    }
+        
+:}
 
+terminal PLUS, MINUS, MUL, DIV, ASSIGN;
+terminal GREATER, LESS, EQUAL, UNEQUAL;
+terminal AND, OR, MAIN, PUTW, PUTS, QUOTE;
+terminal IF, ELSE, WHILE, BREAK;
+terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
+
+terminal String ID;
+terminal String INT;
+terminal String STRING;
+
+// non terminals
+non terminal Program, Assigns, Body;
+non terminal Assign;
+non terminal SentenceBlock;
+non terminal Sentences, Sentence;
+non terminal Expression Expression;
+non terminal Expression Condition;
+non terminal SentIf, SentElse;
+non terminal SentWhile;
+non terminal SentAssign;
+non terminal SentPutw, SentPuts;
+non terminal SentBreak;
+
+precedence left ASSIGN;
+precedence left OR, AND;
+precedence left EQUAL, UNEQUAL, GREATER, LESS;
 precedence left PLUS, MINUS;
 precedence left MUL, DIV;
-precedence left ASSIGN;
+precedence left LPAREN, RPAREN;
+precedence left ELSE;
 
+// grammar
 
-startpoint    ::= body:b
-                    {: StartPoint sp = new StartPoint(b);
-                        sp.go();
-                     :}
-              ;
+Program ::= {:
+                initialize();
+            :}
+            Assigns Body | Body;
 
-body          ::= vars:v MAIN LPAREN RPAREN LBRACE statement:s RBRACE
-                    {: RESULT = new Body(v, s) :}
-              ;
+Assigns ::= Assigns Assign | Assign;
 
-vars          ::= INT IDENT:i
-		  	{: RESULT = new VarLst(i); :}
-		| vars :vl SEMICOLON INT IDENT:i
-			{: vl.add(i); RESULT = vl; :}
-		;
+Assign ::= INT ID:id SEMICOLON {:
+                symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
+                if(SymTable.insert(id, sym)) {
+                    // insertar codigo para codigo intermedio aqui
+                } else {
+                    // error code here
+                }
+            :};
 
-statement     ::= IDENT:i ASSIGN expr:e
-		  	{: RESULT = new Assignment(i,e); :}
-		| IF LPAREN condition:c RPAREN LBRACE  statement:s RBRACE
-			{: RESULT = new If(c,s); :}
-                /*| IF LPAREN condition:c RPAREN LBRACE  statement:s RBRACE ELSE
-			{: RESULT = new If(c,s); :}*/
-		| WHILE LPAREN condition:c RPAREN LBRACE statement:s RBRACE
-			{: RESULT = new While(c,s); :}
-		| PUTW LPAREN expr:e RPAREN
-			{: RESULT = new Print(e); :}
-                | PUTS LPAREN QUOTE IDENT:i QUOTE RPAREN
-			{: RESULT = new PrintS(i); :}
-		;
+Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
+            :} RBRACE;
 
-stmt_lst       ::= statement:s
-		  	{: RESULT = new StmtLst(s); :}
-		| stmt_lst:sl SEMICOLON statement:s
-			{: sl.add(s); RESULT = sl; :}
-		;
+SentenceBlock ::= Assigns |;
 
+Sentences ::= Sentences Sentence | Sentence;
 
-expr          ::= expr:e1 PLUS expr:e2 
-                    {: RESULT = new Plus(e1, e2); :}
-                | expr:e1 MINUS expr:e2
-                    {: RESULT = new Minus(e1, e2); :}
-                | expr:e1 MUL expr:e2
-                    {: RESULT = new Multiply(e1, e2); :}
-                | expr:e1 DIV expr:e2
-                    {: RESULT = new Divide(e1, e2); :}
-                | LPAREN expr:e RPAREN
-                    {: RESULT = e; :}
-                | IDENT:s ASSIGN expr:e
-                    {: RESULT = new Assignment(s, e); :}
-                | IDENT:s
-                    {: RESULT = new Identifier(s); :}
-                | NUMBER:n
-                    {: RESULT = new Literal(n); :}
-                ;
+Expression ::= Expression:e1 PLUS Expression:e2 {:
+            :} |
+            Expression:e1 MINUS Expression:e2 {:
+            :} |
+            Expression:e1 MUL Expression:e2 {:
+            :} |
+            Expression:e1 DIV Expression:e2 {:
+            :} |
+            Expression:e1 PLUS Expression:e2 {:
+            :} |
+            INT:e {:
+            :} |
+            ID:id {:
+            :};
 
+Condition ::= Condition:c1 OR Condition:c2 {:
+            :} |
+            Condition:c1 AND Condition:c2 {:
+            :} |
+            Condition:c1 EQUAL Condition:c2 {:
+            :} |
+            Condition:c1 UNEQUAL Condition:c2 {:
+            :} |
+            Condition:c1 GREATER Condition:c2 {:
+            :} |
+            Condition:c1 LESS Condition:c2 {:
+            :} |
+            LPAREN Condition:c RPAREN {:
+            :};
 
-cond        ::= expr:e1  GREATER expr:e2
-                    {: RESULT new Greater(e1,e2); :}
-              | expr:e1 LESS expr:e2
-                    {: RESULT new Less(e1,e2); :}
-              | expr:e1 EQUAL expr:e2
-                    {: RESULT new Equal(e1,e2); :}
-              | expr:e1 UNEQUAL expr:e2
-                    {: RESULT new (e1,e2); :}
-              | expr:e1  expr:e2
-                    {: RESULT new (e1,e2); :}
-              | expr:e1  expr:e2
-                    {: RESULT new (e1,e2); :}
-              | expr:e1  expr:e2
-                    {: RESULT new (e1,e2); :}
-              ;
+SentIf ::= IF LPAREN {:
+            :} Condition:c {:
+            :} RPAREN LBRACE SentenceBlock RBRACE {:
+            :}
+            SentElse {:
+            :};
+
+SentElse ::= ELSE LBRACE SentenceBlock RBRACE |;
+
+SentWhile ::= WHILE LPAREN {:
+            :} Condition:c {:
+            :} RPAREN LBRACE {:
+            :} SentenceBlock {:
+            :} RBRACE {:
+            :};
+
+SentAssign ::= ID:id {:
+            :} ASSIGN Expression:e SEMICOLON {:
+            :};
+
+SentPutw ::= PUTW LPAREN Expression:e {:
+            :} RPAREN SEMICOLON;
+
+SentPuts ::= PUTS LPAREN STRING:s {:
+            :} RPAREN SEMICOLON;
+
+SentBreak ::= BREAK {:
+            :} SEMICOLON;
+
+Sentence ::=    SentIf |
+                SentWhile |
+                SentAssign |
+                SentPutw |
+                SentPuts |
+                SentBreak;
