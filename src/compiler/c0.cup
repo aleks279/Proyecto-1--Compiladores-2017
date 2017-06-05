@@ -8,15 +8,157 @@ import types.*;
 
 action code {:
     public int addressCounter = 65535;
-    
+    public int whileCounter;
+    public int ifCounter;
+    Stack<Integer> pile;
     void initialize() {
         // Sym table stack initializer
         SymTable.initialize();
 
         // Initialize types
         Type.createTypes();
+
+        //
+        ifCounter=0;
+        whileCounter=0;
+        pile = new Stack<Integer> ();
     }
-        
+
+    Expression plus(Expression e1, Expression e2){
+        addressCounter--;
+        CICode.saveCode("SUMAR",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression minus(Expression e1, Expression e2){
+        addressCounter--;
+        CICode.saveCode("RESTAR",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression mul(Expression e1, Expression e2){
+        addressCounter--;
+        CICode.saveCode("MULTIPLICAR",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression div(Expression e1, Expression e2){
+        addressCounter--;
+        CICode.saveCode("DIVIDIR",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression int(String e){
+        addressCounter--;
+        CICode.saveCode("CARGAR_VALOR",
+            e,
+            "null",
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression id(String id){
+        addressCounter--;
+        CICode.saveCode("CARGAR_DIRECCION",
+            String.valueOf((SymTable.get(id)).getAddress()),
+            "null",
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+
+
+    Expression or(Expression c1, Expression c2){
+        addressCounter--;
+        CICode.saveCode("OR",
+            String.valueOf(c1.getAddress()),
+            String.valueOf(c2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression and(Expression c1, Expression c2){
+        addressCounter--;
+        CICode.saveCode("AND",
+            String.valueOf(c1.getAddress()),
+            String.valueOf(c2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression greater(Expression e1, Expression e2){
+        addressCounter--;
+       CICode.saveCode("MAYOR",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression less(Expression e1, Expression e2){
+        addressCounter--;
+       CICode.saveCode("MENOR",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression equal(Expression e1, Expression e2){
+        addressCounter--;
+       CICode.saveCode("IGUAL",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+    Expression unequal(Expression e1, Expression e2){
+        addressCounter--;
+       CICode.saveCode("DISTINTO",
+            String.valueOf(e1.getAddress()),
+            String.valueOf(e2.getAddress()),
+            String.valueOf(addressCounter));
+        return new Expression(addressCounter);
+    }
+
+    //methods
+
+    void assign(String s, Expression e){
+        CICode.saveCode("CARGAR_DIRECCION",
+            String.valueOf(e.getAddress()),
+            "null",
+            String.valueOf((SymTable.get(id)).getAddress()));
+    }
+
+
+    void condition(Expression e, int n){
+        CICode.saveCode("SALTAR_CONDICION",
+            String.valueOf(e.getAddress()),
+            "null",
+            "ELSE_"+String.valueOf(n));        
+    }
+
+    void jumpLabel(String label, int n){
+        CICode.saveCode("SALTAR_CONDICION",
+            "null",
+            "null",
+            label+"_"+String.valueOf(n));    
+    }
+
+    void putLabel(String label, int n){
+        CICode.saveCode("ETIQUETA",
+            "null",
+            "null",
+            label+"_"+String.valueOf(n));    
+    }
+
+
+    //borre el while por errores
+    //faltan prints
+
+
 :}
 
 terminal PLUS, MINUS, MUL, DIV, ASSIGN;
@@ -76,40 +218,68 @@ SentenceBlock ::= Assigns |;
 Sentences ::= Sentences Sentence | Sentence;
 
 Expression ::= Expression:e1 PLUS Expression:e2 {:
+                RESULT= plus(e1,e2);
             :} |
             Expression:e1 MINUS Expression:e2 {:
+                RESULT= minus(e1,e2);
             :} |
             Expression:e1 MUL Expression:e2 {:
+                RESULT= mul(e1,e2);
             :} |
             Expression:e1 DIV Expression:e2 {:
-            :} |
-            Expression:e1 PLUS Expression:e2 {:
+                RESULT= div(e1,e2);
             :} |
             INT:e {:
+                RESULT= int(e);
             :} |
             ID:id {:
+                symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
+                if(SymTable.insert(id, sym)) {
+                    RESULT = id(id);
+                } else {
+                    // error code here
+                    RESULT = id("null");
+                }
+            :} |
+            LPAREN Expression:e RPAREN {:
+                RESULT= e;
             :};
+                
 
 Condition ::= Condition:c1 OR Condition:c2 {:
+                RESULT = or(c1,c2);
             :} |
             Condition:c1 AND Condition:c2 {:
+                RESULT = and(c1,c2);
             :} |
-            Condition:c1 EQUAL Condition:c2 {:
+            Expression:e1 EQUAL Expression:e2 {:
+                RESULT = equal(e1,e2);
             :} |
-            Condition:c1 UNEQUAL Condition:c2 {:
+            Condition:c1 UNEQUAL Expression:e2 {:
+                RESULT = unequal(e1,e2);
             :} |
-            Condition:c1 GREATER Condition:c2 {:
+            Expression:e1 GREATER Expression:e2 {:
+                RESULT = greater(e1,e2);
             :} |
-            Condition:c1 LESS Condition:c2 {:
+            Expression:e1 LESS Expression:e2 {:
+                RESULT = less(e1,e2);
             :} |
             LPAREN Condition:c RPAREN {:
+                RESULT = c;
             :};
 
 SentIf ::= IF LPAREN {:
+                ifCounter++;
+                pile.push(ifCounter);
             :} Condition:c {:
+                condition(c, pile.peek());
             :} RPAREN LBRACE SentenceBlock RBRACE {:
+                jumpLabel("FINIF", pile.peek());
+                putLabel("ELSE", pile.peek());
             :}
             SentElse {:
+                putLabel("FINIF", pile.peek());
+                pile.pop();
             :};
 
 SentElse ::= ELSE LBRACE SentenceBlock RBRACE |;
@@ -123,6 +293,7 @@ SentWhile ::= WHILE LPAREN {:
 
 SentAssign ::= ID:id {:
             :} ASSIGN Expression:e SEMICOLON {:
+                RESULT = assign(id,e);
             :};
 
 SentPutw ::= PUTW LPAREN Expression:e {:
