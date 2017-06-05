@@ -257,7 +257,7 @@ Condition ::= Condition:c1 OR Condition:c2 {:
             Expression:e1 EQUAL Expression:e2 {:
                 RESULT = equal(e1,e2);
             :} |
-            Expresion:e1 UNEQUAL Expression:e2 {:
+            Expression:e1 UNEQUAL Expression:e2 {:
                 RESULT = unequal(e1,e2);
             :} |
             Expression:e1 GREATER Expression:e2 {:

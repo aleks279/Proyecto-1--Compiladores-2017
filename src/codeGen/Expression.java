@@ -16,7 +16,7 @@ public class Expression {
         this.address = pAddress;
     }
     
-    int getAddress() {
+    public int getAddress() {
         return this.address;
     }
 }
