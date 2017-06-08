@@ -43,12 +43,12 @@ public class Compiler {
                 System.out.print(ex);
             }
             
-            try {
-                Yylex lexer = new Yylex(new StringReader(this.program));
-                new parser(lexer).parse();
-            } catch (Exception ex2) {
-                System.out.print(ex2);
-            }
+//            try {
+//                Yylex lexer = new Yylex(new StringReader(this.program));
+//                new parser(lexer).parse();
+//            } catch (Exception ex2) {
+//                System.out.print(ex2);
+//            }
 //            while (true) {
 //                String st = this.program;
 //                Environment env = new Environment();
