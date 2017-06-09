@@ -1,6 +1,6 @@
 package compiler;
 
-
+import java.util.*;
 import java_cup.runtime.*;
 import codeGen.*;
 import symTable.*;
@@ -17,7 +17,7 @@ action code {:
 
         // Initialize types
         Type.createTypes();
-
+        CICode.listenCode();
         //
         ifCounter=0;
         whileCounter=0;
@@ -56,7 +56,7 @@ action code {:
             String.valueOf(addressCounter));
         return new Expression(addressCounter);
     }
-    Expression int(String e){
+    Expression integer(String e){
         addressCounter--;
         CICode.saveCode("CARGAR_VALOR",
             e,
@@ -129,7 +129,7 @@ action code {:
         CICode.saveCode("CARGAR_DIRECCION",
             String.valueOf(e.getAddress()),
             "null",
-            String.valueOf((SymTable.get(id)).getAddress()));
+            String.valueOf((SymTable.get(s)).getAddress()));
     }
 
 
@@ -196,6 +196,7 @@ precedence left ELSE;
 
 Program ::= {:
                 initialize();
+
             :}
             Assigns Body | Body;
 
@@ -211,6 +212,7 @@ Assign ::= INT ID:id SEMICOLON {:
             :};
 
 Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
+                CICode.closeIC();
             :} RBRACE;
 
 SentenceBlock ::= Assigns |;
@@ -230,7 +232,7 @@ Expression ::= Expression:e1 PLUS Expression:e2 {:
                 RESULT= div(e1,e2);
             :} |
             INT:e {:
-                RESULT= int(e);
+                RESULT= integer(e);
             :} |
             ID:id {:
                 symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
@@ -255,7 +257,7 @@ Condition ::= Condition:c1 OR Condition:c2 {:
             Expression:e1 EQUAL Expression:e2 {:
                 RESULT = equal(e1,e2);
             :} |
-            Condition:c1 UNEQUAL Expression:e2 {:
+            Expression:e1 UNEQUAL Expression:e2 {:
                 RESULT = unequal(e1,e2);
             :} |
             Expression:e1 GREATER Expression:e2 {:
@@ -293,7 +295,7 @@ SentWhile ::= WHILE LPAREN {:
 
 SentAssign ::= ID:id {:
             :} ASSIGN Expression:e SEMICOLON {:
-                RESULT = assign(id,e);
+                assign(id,e);
             :};
 
 SentPutw ::= PUTW LPAREN Expression:e {:

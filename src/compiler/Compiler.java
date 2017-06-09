@@ -49,15 +49,11 @@ public class Compiler {
             } catch (Exception ex2) {
                 System.out.print(ex2);
             }
-//            while (true) {
-//                String st = this.program;
-//                Environment env = new Environment();
-//                parser p = new parser(new Lexer(new StringReader(st)));
-//                Symbol s = p.parse();
-//                Tree tree = (Tree) s.value;
-//                env.print();
-//                tree.print();
-//            }
+            while (true) {
+                String st = this.program;
+                parser p = new parser(new Yylex(new StringReader(st)));
+                Symbol s = p.parse();
+            }
         }
         catch (Exception e) {
             System.out.println("Parsing error.");
