@@ -17,7 +17,8 @@ public class CICode {
     }
     
     public static void saveCode(String val, String exp1, String exp2, String result){
-        intermediateCode+= val+" "+exp1+" "+exp2+" "+result+"\n";
+        Quadruple quadruple = new Quadruple(val, exp1, exp2, result);
+        intermediateCode+= quadruple.toString();
     }
     
     public static void closeIC(){
