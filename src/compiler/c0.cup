@@ -295,7 +295,7 @@ SentWhile ::= WHILE LPAREN {:
 
 SentAssign ::= ID:id {:
             :} ASSIGN Expression:e SEMICOLON {:
-                //RESULT = assign(id,e);
+                RESULT = assign(id,e);
             :};
 
 SentPutw ::= PUTW LPAREN Expression:e {:
