@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package codeGen;
-
 import java.util.*;
 
 /**
@@ -13,10 +12,11 @@ import java.util.*;
  */
 public class CICode {
     public static String intermediateCode;
-    public ArrayList<Quadruple> finalCodeList;
+    public static ArrayList<Quadruple> finalCodeList = new ArrayList<Quadruple> ();
+    
     public static void listenCode(){
         intermediateCode = "";
-        finalCodeList = new ArrayList<Quadruple> ();
+        
     }
     
     public static void saveCode(String val, String exp1, String exp2, String result){

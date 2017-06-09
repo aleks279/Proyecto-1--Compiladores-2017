@@ -9,8 +9,10 @@ import types.*;
 action code {:
     public int addressCounter = 65535;
     public int whileCounter;
+    public int loopCounter;
     public int ifCounter;
     Stack<Integer> pile;
+    Stack<Tnteger> loopPile;
     void initialize() {
         // Sym table stack initializer
         SymTable.initialize();
@@ -140,6 +142,13 @@ action code {:
             "ELSE_"+String.valueOf(n));        
     }
 
+    void condition_while(Expression e, int n) {
+        CICode.saveCode("SALTAR_CONDICION",
+            String.valueOf(e.getAddress()),
+            "null",
+            "FINBUCLE_"+String.valueOf(n));            
+    }
+    
     void jumpLabel(String label, int n){
         CICode.saveCode("SALTAR_CONDICION",
             "null",
@@ -153,12 +162,25 @@ action code {:
             "null",
             label+"_"+String.valueOf(n));    
     }
+    
 
+    //print
+    void printW(){
+        CICode.saveCode(
+            "IMPRIMIR_ENTERO",
+            String.valueOf(e.getAddress()),
+            "null",
+            "null");
+    }
 
-    //borre el while por errores
-    //faltan prints
-
-
+    void printS(String s, int n) {
+        stringList.add(c);
+        CICode.saveCode(
+            "IMPRIMIR_CADENA",
+            "CADENA_"+String.valueOf(n),
+            "null",
+            "null");
+    }   
 :}
 
 terminal PLUS, MINUS, MUL, DIV, ASSIGN;
@@ -287,10 +309,19 @@ SentIf ::= IF LPAREN {:
 SentElse ::= ELSE LBRACE SentenceBlock RBRACE |;
 
 SentWhile ::= WHILE LPAREN {:
+                loopCounter++;
+                loopPile.push(loopCounter);
+                putLabel("BUCLE",loopPile.peek());
             :} Condition:c {:
+                condition_while(c,loopPile.peek());
             :} RPAREN LBRACE {:
+                whileCounter++;
             :} SentenceBlock {:
+                whileCounter--;
             :} RBRACE {:
+                jumpLabel("BUCLE",loopPile.peek());
+                putLaber("FINBUCLE",loopPile.peek());
+                loopPile.pop();
             :};
 
 SentAssign ::= ID:id {:
@@ -299,9 +330,11 @@ SentAssign ::= ID:id {:
             :};
 
 SentPutw ::= PUTW LPAREN Expression:e {:
+                printW(e);
             :} RPAREN SEMICOLON;
 
 SentPuts ::= PUTS LPAREN STRING:s {:
+                
             :} RPAREN SEMICOLON;
 
 SentBreak ::= BREAK {:
