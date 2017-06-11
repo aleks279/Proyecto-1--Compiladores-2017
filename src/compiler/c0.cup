@@ -11,15 +11,19 @@ action code {:
     public int whileCounter;
     public int loopCounter;
     public int ifCounter;
+    public int printCounter
     Stack<Integer> pile;
-    Stack<Tnteger> loopPile;
+    Stack<Integer> loopPile;
+
     void initialize() {
         // Sym table stack initializer
         SymTable.initialize();
-
+        
         // Initialize types
         Type.createTypes();
         CICode.listenCode();
+        finalCodeList.clear();
+        stringList.clear();
         //
         ifCounter=0;
         whileCounter=0;
@@ -165,7 +169,7 @@ action code {:
     
 
     //print
-    void printW(){
+    void printW(Expression e){
         CICode.saveCode(
             "IMPRIMIR_ENTERO",
             String.valueOf(e.getAddress()),
@@ -180,7 +184,15 @@ action code {:
             "CADENA_"+String.valueOf(n),
             "null",
             "null");
-    }   
+    }
+
+    void endProgram(){
+        CICode.saveCode(
+            "FIN",
+            "null",
+            "null",
+            "null");
+    }
 :}
 
 terminal PLUS, MINUS, MUL, DIV, ASSIGN;
@@ -195,7 +207,7 @@ terminal String STRING;
 
 // non terminals
 non terminal Program, Assigns, Body;
-non terminal Assign;
+non terminal Declaration;
 non terminal SentenceBlock;
 non terminal Sentences, Sentence;
 non terminal Expression Expression;
@@ -214,6 +226,7 @@ precedence left MUL, DIV;
 precedence left LPAREN, RPAREN;
 precedence left ELSE;
 
+start with Program;
 // grammar
 
 Program ::= {:
@@ -222,9 +235,9 @@ Program ::= {:
             :}
             Assigns Body | Body;
 
-Assigns ::= Assigns Assign | Assign;
+Assigns ::= Assigns Declaration | Declaration;
 
-Assign ::= INT ID:id SEMICOLON {:
+Declaration ::= INT ID:id SEMICOLON {:
                 symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
                 if(SymTable.insert(id, sym)) {
                     // insertar codigo para codigo intermedio aqui
@@ -234,10 +247,12 @@ Assign ::= INT ID:id SEMICOLON {:
             :};
 
 Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
+                endProgram();
+                CICode.generateStrings();
                 CICode.closeIC();
             :} RBRACE;
 
-SentenceBlock ::= Assigns |;
+SentenceBlock ::= Sentences |;
 
 Sentences ::= Sentences Sentence | Sentence;
 
@@ -320,7 +335,7 @@ SentWhile ::= WHILE LPAREN {:
                 whileCounter--;
             :} RBRACE {:
                 jumpLabel("BUCLE",loopPile.peek());
-                putLaber("FINBUCLE",loopPile.peek());
+                putLabel("FINBUCLE",loopPile.peek());
                 loopPile.pop();
             :};
 
@@ -334,7 +349,8 @@ SentPutw ::= PUTW LPAREN Expression:e {:
             :} RPAREN SEMICOLON;
 
 SentPuts ::= PUTS LPAREN STRING:s {:
-                
+                printCounter++;
+                printS(s,)
             :} RPAREN SEMICOLON;
 
 SentBreak ::= BREAK {:
