@@ -61,4 +61,4 @@ String         = \"([\x20-\x21\x23-\xFE])*\"
 
 ({WhiteSpace}|{LineTerminator}|{WhiteSpace})+   {  }
 
-.|\n            { throw new Error("Illegal character <" + yytext() + ">");}
+.            { throw new Error("Illegal character <" + yytext() + ">");}

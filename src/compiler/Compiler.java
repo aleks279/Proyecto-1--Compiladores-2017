@@ -45,7 +45,8 @@ public class Compiler {
             
             try {
                 Yylex lexer = new Yylex(new StringReader(this.program));
-                new parser(lexer).parse();
+                 parser p =new parser(lexer);
+                 Object result = p.parse().value;
             } catch (Exception ex2) {
                 System.out.print(ex2);
             }
@@ -56,7 +57,7 @@ public class Compiler {
             }
         }
         catch (Exception e) {
-            System.out.println("Parsing error.");
+            System.out.println("Parsing error. ");
             System.out.println(e);
         };
     }

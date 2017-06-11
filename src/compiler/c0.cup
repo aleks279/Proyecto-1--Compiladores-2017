@@ -11,7 +11,7 @@ action code {:
     public int whileCounter;
     public int loopCounter;
     public int ifCounter;
-    public int printCounter
+    public int printCounter;
     Stack<Integer> pile;
     Stack<Integer> loopPile;
 
@@ -22,11 +22,13 @@ action code {:
         // Initialize types
         Type.createTypes();
         CICode.listenCode();
-        finalCodeList.clear();
-        stringList.clear();
+        CICode.finalCodeList.clear();
+        CICode.stringList.clear();
         //
         ifCounter=0;
         whileCounter=0;
+        printCounter = 0;
+        loopCounter = 0;
         pile = new Stack<Integer> ();
     }
 
@@ -178,7 +180,7 @@ action code {:
     }
 
     void printS(String s, int n) {
-        stringList.add(c);
+        CICode.stringList.add(s);
         CICode.saveCode(
             "IMPRIMIR_CADENA",
             "CADENA_"+String.valueOf(n),
@@ -197,7 +199,7 @@ action code {:
 
 terminal PLUS, MINUS, MUL, DIV, ASSIGN;
 terminal GREATER, LESS, EQUAL, UNEQUAL;
-terminal AND, OR, MAIN, PUTW, PUTS, QUOTE;
+terminal AND, OR, MAIN, PUTW, PUTS;
 terminal IF, ELSE, WHILE, BREAK;
 terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
 
@@ -231,7 +233,7 @@ start with Program;
 
 Program ::= {:
                 initialize();
-
+                CICode.printy();
             :}
             Assigns Body | Body;
 
@@ -241,8 +243,10 @@ Declaration ::= INT ID:id SEMICOLON {:
                 symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
                 if(SymTable.insert(id, sym)) {
                     // insertar codigo para codigo intermedio aqui
+CICode.printy();
                 } else {
                     // error code here
+CICode.printy();
                 }
             :};
 
@@ -350,7 +354,7 @@ SentPutw ::= PUTW LPAREN Expression:e {:
 
 SentPuts ::= PUTS LPAREN STRING:s {:
                 printCounter++;
-                printS(s,)
+                printS(s,printCounter);
             :} RPAREN SEMICOLON;
 
 SentBreak ::= BREAK {:
