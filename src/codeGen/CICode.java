@@ -33,18 +33,19 @@ public class CICode {
     }
 
     public static void closeIC(){
-        try{
-            FileWriter writer = new FileWriter("CodeIntermediate.CI");
-            BufferedWriter buffer = new BufferedWriter(writer);
-            buffer.write(intermediateCode);
-
-            buffer.close();
-            writer.close();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
+//        try{
+//            FileWriter writer = new FileWriter("CodeIntermediate.CI");
+//            BufferedWriter buffer = new BufferedWriter(writer);
+//            buffer.write(intermediateCode);
+//
+//            buffer.close();
+//            writer.close();
+//            
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
+        System.out.println(intermediateCode);
         
     }
 }

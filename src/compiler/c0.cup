@@ -253,6 +253,8 @@ Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
                 endProgram();
                 CICode.generateStrings();
                 CICode.closeIC();
+                //ERRORS.report(CICode.finalCodeList.toString(),1);
+                FinalCode.generateFinalCode();
             :} RBRACE;
 
 SentenceBlock ::= Sentences |;

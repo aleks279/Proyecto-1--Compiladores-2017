@@ -6,6 +6,9 @@
 package codeGen;
 
 import static codeGen.CICode.finalCodeList;
+import static codeGen.CICode.intermediateCode;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 /**
  *
@@ -16,85 +19,105 @@ public class FinalCode {
     public static void generateFinalCode(){
         int index ;
         int max = finalCodeList.size();
-        String buffer = "";
+        String buffer = ";C0 final code implements with much love\n";
         String line = "                        ";
         Quadruple temp;
-        for (index = 0; index<max; index++) {
+        String op;
+        for (index = 0; index < max-1; index++) {
+            System.out.println(index);
             temp = finalCodeList.get(index);
+            System.out.println(temp.getOperation());
+            op = temp.getOperation().toString();
             if (temp.getOperation().equals("CARGAR_DIRECCION")){
-                buffer.concat(line+"MOVE /"+temp.getOperand1()+" , /"+temp.getResult()+"\n");
+                buffer+=(line+"MOVE /"+temp.getOperand1()+" , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("CARGAR_VALOR")){
-                buffer.concat(line="MOVE #"+temp.getOperand1()+" , /"+temp.getResult()+"\n");
+                buffer+=(line+"MOVE #"+temp.getOperand1()+" , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("SUMAR")){
-                buffer.concat(line+"ADD /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"MOVE .A , /"+temp.getResult()+"\n");
+                buffer+=(line+"ADD /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"MOVE .A , /"+temp.getResult()+"\n");
             } 
-            else if (temp.getOperation().equals("RESTAR")){
-                buffer.concat(line+"SUB /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"MOVE .A , /"+temp.getResult()+"\n");
+            else if (op.equals("RESTAR")){
+                System.out.println("codeGen.FinalCode.generateFinalCode()");
+                buffer+=(line+"SUB /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"MOVE .A , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("MULTIPLICAR")){
-                buffer.concat(line+"MUL /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"MOVE .A , /"+temp.getResult()+"\n");
+                buffer+=(line+"MUL /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"MOVE .A , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("DIVIDIR")){
-                buffer.concat(line+"DIV /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"MOVE .A , /"+temp.getResult()+"\n");
+                buffer+=(line+"DIV /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"MOVE .A , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("OR")){
-                buffer.concat(line+"OR /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"MOVE .A , /"+temp.getResult()+"\n");
+                buffer+=(line+"OR /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"MOVE .A , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("AND")){
-                buffer.concat(line+"AND /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"MOVE .A , /"+temp.getResult()+"\n");
+                buffer+=(line+"AND /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"MOVE .A , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("MAYOR")){
-                buffer.concat(line+"CMP /"+temp.getOperand2()+" , /"+temp.getOperand1()+"\n");
-                buffer.concat(line+"BN $5"+"\n");
-                buffer.concat(line+"MOVE #0 , /"+temp.getResult()+"\n");
-                buffer.concat(line+"BR $3"+"\n");
-                buffer.concat(line+"MOVE #1 , /"+temp.getResult()+"\n");
+                buffer+=(line+"CMP /"+temp.getOperand2()+" , /"+temp.getOperand1()+"\n");
+                buffer+=(line+"BN $5"+"\n");
+                buffer+=(line+"MOVE #0 , /"+temp.getResult()+"\n");
+                buffer+=(line+"BR $3"+"\n");
+                buffer+=(line+"MOVE #1 , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("MENOR")){
-                buffer.concat(line+"CMP /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"BN $5"+"\n");
-                buffer.concat(line+"MOVE #0 , /"+temp.getResult()+"\n");
-                buffer.concat(line+"BR $3"+"\n");
-                buffer.concat(line+"MOVE #1 , /"+temp.getResult()+"\n");
+                buffer+=(line+"CMP /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"BN $5"+"\n");
+                buffer+=(line+"MOVE #0 , /"+temp.getResult()+"\n");
+                buffer+=(line+"BR $3"+"\n");
+                buffer+=(line+"MOVE #1 , /"+temp.getResult()+"\n");
             } 
             else if (temp.getOperation().equals("IGUAL")){
-                buffer.concat(line+"CMP /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"BZ $5"+"\n");
-                buffer.concat(line+"MOVE #0 , /"+temp.getResult()+"\n");
-                buffer.concat(line+"BR $3"+"\n");
-                buffer.concat(line+"MOVE #1 , /"+temp.getResult()+"\n");
+                buffer+=(line+"CMP /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"BZ $5"+"\n");
+                buffer+=(line+"MOVE #0 , /"+temp.getResult()+"\n");
+                buffer+=(line+"BR $3"+"\n");
+                buffer+=(line+"MOVE #1 , /"+temp.getResult()+"\n");
             }
             else if (temp.getOperation().equals("DISTINTO")){
-                buffer.concat(line+"CMP /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
-                buffer.concat(line+"BZ $5"+"\n");
-                buffer.concat(line+"MOVE #0 , /"+temp.getResult()+"\n");
-                buffer.concat(line+"BR $3"+"\n");
-                buffer.concat(line+"MOVE #1 , /"+temp.getResult()+"\n");
+                buffer+=(line+"CMP /"+temp.getOperand1()+" , /"+temp.getOperand2()+"\n");
+                buffer+=(line+"BZ $5"+"\n");
+                buffer+=(line+"MOVE #0 , /"+temp.getResult()+"\n");
+                buffer+=(line+"BR $3"+"\n");
+                buffer+=(line+"MOVE #1 , /"+temp.getResult()+"\n");
             }
-            else if (temp.getOperation().equals(" ")){
-                buffer.concat(line+"\n");
+            else if (temp.getOperation().equals("FIN")){
+                buffer+=(line+"\n");
             }
-            else if (temp.getOperation().equals(" ")){
-                buffer.concat(line+"\n");
-            }
-            else if (temp.getOperation().equals(" ")){
-                buffer.concat(line+"\n");
-            }
-            else if (temp.getOperation().equals(" ")){
-                buffer.concat(line+"\n");
-            }
-            else if (temp.getOperation().equals(" ")){
-                buffer.concat(line+"\n");
-            }
+//            else if (temp.getOperation().equals(" ")){
+//                buffer+=(line+"\n");
+//            }
+//            else if (temp.getOperation().equals(" ")){
+//                buffer+=(line+"\n");
+//            }
+//            else if (temp.getOperation().equals(" ")){
+//                buffer+=(line+"\n");
+//            }
+//            else if (temp.getOperation().equals(" ")){
+//                buffer+=(line+"\n");
+//            }
             
         }
+        System.out.println(buffer);
     }
-}
+    public static void writeFile(String finalCode){
+        try{
+                FileWriter writer = new FileWriter("FinalCode.ens");
+                BufferedWriter buffer = new BufferedWriter(writer);
+                buffer.write(finalCode);
+
+                buffer.close();
+                writer.close();
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            }
+    }
+
