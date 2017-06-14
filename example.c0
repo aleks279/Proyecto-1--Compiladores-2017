@@ -1,6 +1,5 @@
 int x;
 int y;
 main() {
-	x=1-12;
-	y=x*32;
+
 }
