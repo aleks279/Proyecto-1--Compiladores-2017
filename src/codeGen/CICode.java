@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package codeGen;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -30,10 +33,18 @@ public class CICode {
     }
 
     public static void closeIC(){
-        // file writer and code generations
-        // new file writer 
-        System.out.println(intermediateCode);
-        //call final code generation
+        try{
+            FileWriter writer = new FileWriter("CodeIntermediate.CI");
+            BufferedWriter buffer = new BufferedWriter(writer);
+            buffer.write(intermediateCode);
+
+            buffer.close();
+            writer.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
         
     }
 }
