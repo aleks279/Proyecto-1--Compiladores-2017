@@ -87,7 +87,7 @@ public class FinalCode {
             }
             else if (temp.getOperation().equals("ETIQUETA")){
                 String subLine = temp.getResult()+":"+line;
-                buffer+=(subLine.substring(0, line.length())+" NOP\n");
+                buffer+=(subLine.substring(0, line.length())+"NOP\n");
             }
             else if (temp.getOperation().equals("SALTAR_CONDICION")){
                 buffer+=(line+"CMP #0 , /"+temp.getOperand1()+"\n");

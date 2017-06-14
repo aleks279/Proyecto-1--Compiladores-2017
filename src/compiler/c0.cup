@@ -158,7 +158,7 @@ action code {:
     }
     
     void jumpLabel(String label, int n){
-        CICode.saveCode("SALTAR_CONDICION",
+        CICode.saveCode("SALTAR_EETIQUETA",
             "null",
             "null",
             label+"_"+String.valueOf(n));    
