@@ -17,12 +17,12 @@ public class SymTable {
     static SymTable root = new SymTable(null);
     static int tableCounter;
     
-    HashMap<String, Symbol> table;
+    HashMap<String, SymbolT> table;
     SymTable previous;
     List<String> vars;
     
     public SymTable(SymTable pPrevious) {
-        table = new HashMap<String, Symbol>();
+        table = new HashMap<String, SymbolT>();
         this.previous = pPrevious;
         vars = new ArrayList<String>();
     }
@@ -36,20 +36,28 @@ public class SymTable {
         currentScope = root;
     }
     
-    public static boolean insert(String name, Symbol sym) {
+    public static void insert(String name, SymbolT sym) {
         if(!currentScope.table.containsKey(name)) {
             currentScope.table.put(name, sym);
-            return true;
         }
-        return false;
+
     }
     
-    public static void insertSymbol(String name, Symbol sym) {
+    public static void insertSymbol(String name, SymbolT sym) {
         SymTable t = currentScope.previous;
         t.table.put(name, sym);
     }
     
-    public static boolean canInsertVariable(String name, Symbol sym) {
+    public static boolean existSymbol(String name) {
+        SymbolT t = get(name);
+        if(t!=null){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public static boolean canInsertVariable(String name, SymbolT sym) {
         if(!currentScope.table.containsKey(sym)) {
             currentScope.table.put(name, sym);
             currentScope.vars.add(name);
@@ -58,13 +66,13 @@ public class SymTable {
         return false;
     }
     
-    public static Symbol get(String name) {
+    public static SymbolT get(String name) {
         return get(name, currentScope);
     }
     
-    public static Symbol get(String name, SymTable table) {
+    public static SymbolT get(String name, SymTable table) {
         for(SymTable t = table; t != null; t = t.previous) {
-            Symbol s = (Symbol) (t.table.get(name));
+            SymbolT s = (SymbolT) (t.table.get(name));
             if(s != null)
                 return s;
         }

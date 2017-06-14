@@ -1,0 +1,19 @@
+;C0 Final Code
+                                         MOVE #6 , /65532
+                                         MOVE /65532 , /65534
+                                         MOVE #1 , /65531
+                                         MOVE /65531 , /65533
+BUCLE_1:                                  NOP
+                                         MOVE /65534 , /65530
+                                         MOVE #0 , /65529
+                                         CMP /65529 , /65530
+                                         BN $5
+                                         MOVE #0 , /65528
+                                         BR $3
+                                         MOVE #1 , /65528
+                                         CMP #0 , /65528
+                                         BZ /FINBUCLE_1
+                                         CMP #0 , /null
+                                         BZ /BUCLE_1
+FINBUCLE_1:                               NOP
+                                         HALT

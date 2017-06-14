@@ -15,6 +15,7 @@ public class Type {
     public static int INTEGER = 1;
     public static int VOID = 2;
     public static int STRING = 3;
+    public static int STRUCT = 4;
     public static int ERROR = 0;
     
     static HashMap<String, Type> types = new HashMap<String, Type>();
@@ -45,6 +46,7 @@ public class Type {
         types.put(INTEGER+"", new Type(INTEGER, 2, "integer"));
         types.put(VOID+"", new Type(VOID, 0, "integer"));
         types.put(STRING+"", new Type(STRING, 8, "integer"));
+        types.put(STRUCT+"", new Type(STRUCT, 3, "integer"));
         types.put(ERROR+"", new Type(ERROR, 0, "integer"));
     }
     

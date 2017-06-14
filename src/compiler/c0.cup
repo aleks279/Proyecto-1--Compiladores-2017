@@ -9,19 +9,29 @@ import types.*;
 action code {:
     public int addressCounter = 65535;
     public int whileCounter;
+    public int loopCounter;
     public int ifCounter;
+    public int printCounter;
     Stack<Integer> pile;
+    Stack<Integer> loopPile;
+
     void initialize() {
         // Sym table stack initializer
         SymTable.initialize();
-
+        
         // Initialize types
         Type.createTypes();
         CICode.listenCode();
+        CICode.finalCodeList.clear();
+        CICode.stringList.clear();
         //
+
         ifCounter=0;
         whileCounter=0;
+        printCounter = 0;
+        loopCounter = 0;
         pile = new Stack<Integer> ();
+        loopPile = new Stack<Integer> ();
     }
 
     Expression plus(Expression e1, Expression e2){
@@ -140,8 +150,15 @@ action code {:
             "ELSE_"+String.valueOf(n));        
     }
 
-    void jumpLabel(String label, int n){
+    void condition_while(Expression e, int n) {
         CICode.saveCode("SALTAR_CONDICION",
+            String.valueOf(e.getAddress()),
+            "null",
+            "FINBUCLE_"+String.valueOf(n));            
+    }
+    
+    void jumpLabel(String label, int n){
+        CICode.saveCode("SALTAR_EETIQUETA",
             "null",
             "null",
             label+"_"+String.valueOf(n));    
@@ -153,27 +170,49 @@ action code {:
             "null",
             label+"_"+String.valueOf(n));    
     }
+    
 
+    //print
+    void printW(Expression e){
+        CICode.saveCode(
+            "IMPRIMIR_ENTERO",
+            String.valueOf(e.getAddress()),
+            "null",
+            "null");
+    }
 
-    //borre el while por errores
-    //faltan prints
+    void printS(String s, int n) {
+        CICode.stringList.add(s);
+        CICode.saveCode(
+            "IMPRIMIR_CADENA",
+            "CADENA_"+String.valueOf(n),
+            "null",
+            "null");
+    }
 
-
+    void endProgram(){
+        CICode.saveCode(
+            "FIN",
+            "null",
+            "null",
+            "null");
+    }
 :}
 
 terminal PLUS, MINUS, MUL, DIV, ASSIGN;
 terminal GREATER, LESS, EQUAL, UNEQUAL;
-terminal AND, OR, MAIN, PUTW, PUTS, QUOTE;
+terminal AND, OR, MAIN, PUTW, PUTS, INTWORD;
 terminal IF, ELSE, WHILE, BREAK;
 terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
 
 terminal String ID;
 terminal String INT;
 terminal String STRING;
+terminal STRUCT;
 
 // non terminals
 non terminal Program, Assigns, Body;
-non terminal Assign;
+non terminal Declaration;
 non terminal SentenceBlock;
 non terminal Sentences, Sentence;
 non terminal Expression Expression;
@@ -183,6 +222,8 @@ non terminal SentWhile;
 non terminal SentAssign;
 non terminal SentPutw, SentPuts;
 non terminal SentBreak;
+non terminal StructType;
+non terminal StructBlock;
 
 precedence left ASSIGN;
 precedence left OR, AND;
@@ -192,30 +233,46 @@ precedence left MUL, DIV;
 precedence left LPAREN, RPAREN;
 precedence left ELSE;
 
+start with Program;
 // grammar
 
 Program ::= {:
                 initialize();
-
+                
             :}
             Assigns Body | Body;
 
-Assigns ::= Assigns Assign | Assign;
+Assigns ::= Assigns Declaration | Declaration;
 
-Assign ::= INT ID:id SEMICOLON {:
-                symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
-                if(SymTable.insert(id, sym)) {
-                    // insertar codigo para codigo intermedio aqui
+Declaration ::= INTWORD ID:id SEMICOLON {:
+                if(!SymTable.existSymbol(String.valueOf(id))){
+                    SymbolT sym = new SymbolT(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
+                    SymTable.insert(id, sym);
                 } else {
-                    // error code here
+                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+                    ERRORS.report(ERRORS.REPEATED_SYMBOL,line);
                 }
             :};
 
+//StructType ::= STRUCT ID:id {:
+//                if(!SymTable.existSymbol(String.valueOf(id))) {
+//                    SymbolT sym = new SymbolT(id, types.Type.getType(types.Type.STRUCT), false, --addressCounter);
+//                    SymTable.insert(id, sym);
+//                } else {
+//                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+//                    ERRORS.report(ERRORS.REPEATED_SYMBOL, line);
+//                }
+//            :} LBRACE StructBlock RBRACE SEMICOLON;
+//StructBlock ::= StructBlock | Declaration;
+
 Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
+                endProgram();
+                CICode.generateStrings();
                 CICode.closeIC();
+                FinalCode.generateFinalCode();
             :} RBRACE;
 
-SentenceBlock ::= Assigns |;
+SentenceBlock ::= Sentences |;
 
 Sentences ::= Sentences Sentence | Sentence;
 
@@ -235,13 +292,7 @@ Expression ::= Expression:e1 PLUS Expression:e2 {:
                 RESULT= integer(e);
             :} |
             ID:id {:
-                symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
-                if(SymTable.insert(id, sym)) {
-                    RESULT = id(id);
-                } else {
-                    // error code here
-                    RESULT = id("null");
-                }
+                RESULT = id(id);
             :} |
             LPAREN Expression:e RPAREN {:
                 RESULT= e;
@@ -287,24 +338,48 @@ SentIf ::= IF LPAREN {:
 SentElse ::= ELSE LBRACE SentenceBlock RBRACE |;
 
 SentWhile ::= WHILE LPAREN {:
+                loopCounter++;
+                loopPile.push(loopCounter);
+                putLabel("BUCLE",loopPile.peek());
             :} Condition:c {:
+                condition_while(c,loopPile.peek());
             :} RPAREN LBRACE {:
+                whileCounter++;
             :} SentenceBlock {:
+                whileCounter--;
             :} RBRACE {:
+                jumpLabel("BUCLE",loopPile.peek());
+                putLabel("FINBUCLE",loopPile.peek());
+                loopPile.pop();
             :};
 
 SentAssign ::= ID:id {:
+                if(SymTable.existSymbol(String.valueOf(id))){
+                    
+                } else {
+                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+                    ERRORS.report(ERRORS.UNDECLARED_SYM,line);
+                }
             :} ASSIGN Expression:e SEMICOLON {:
                 assign(id,e);
             :};
 
 SentPutw ::= PUTW LPAREN Expression:e {:
+                printW(e);
             :} RPAREN SEMICOLON;
 
 SentPuts ::= PUTS LPAREN STRING:s {:
+                printCounter++;
+                printS(s,printCounter);
             :} RPAREN SEMICOLON;
 
 SentBreak ::= BREAK {:
+                if(whileCounter>0) {
+                    
+                } else {
+                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+                    ERRORS.report(ERRORS.BREAK_OUT_OF_PLACE,line);
+                }
             :} SEMICOLON;
 
 Sentence ::=    SentIf |
