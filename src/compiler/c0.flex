@@ -54,6 +54,7 @@ String         = \"([\x20-\x21\x23-\xFE])*\"
 "putw"          { return symbol(sym.PUTW); }
 "puts"          { return symbol(sym.PUTS); }
 "int"           { return symbol(sym.INTWORD); }
+"struct"        { return symbol(sym.STRUCT); }
 "break"         { return symbol(sym.BREAK); }
 {String}        { return symbol(sym.STRING, yytext()); }
 {Letter}({Letter}|{Digit})*     { return symbol(sym.ID, yytext()); }

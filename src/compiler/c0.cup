@@ -206,6 +206,7 @@ terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
 terminal String ID;
 terminal String INT;
 terminal String STRING;
+terminal STRUCT;
 
 // non terminals
 non terminal Program, Assigns, Body;
@@ -219,6 +220,8 @@ non terminal SentWhile;
 non terminal SentAssign;
 non terminal SentPutw, SentPuts;
 non terminal SentBreak;
+non terminal StructType;
+non terminal StructBlock;
 
 precedence left ASSIGN;
 precedence left OR, AND;
@@ -248,6 +251,17 @@ Declaration ::= INTWORD ID:id SEMICOLON {:
                     ERRORS.report(ERRORS.REPEATED_SYMBOL,line);
                 }
             :};
+
+//StructType ::= STRUCT ID:id {:
+//                if(!SymTable.existSymbol(String.valueOf(id))) {
+//                    SymbolT sym = new SymbolT(id, types.Type.getType(types.Type.STRUCT), false, --addressCounter);
+//                    SymTable.insert(id, sym);
+//                } else {
+//                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+//                    ERRORS.report(ERRORS.REPEATED_SYMBOL, line);
+//                }
+//            :} LBRACE StructBlock RBRACE SEMICOLON;
+//StructBlock ::= StructBlock | Declaration;
 
 Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
                 endProgram();

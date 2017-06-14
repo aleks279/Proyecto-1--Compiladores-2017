@@ -19,14 +19,12 @@ public class FinalCode {
     public static void generateFinalCode(){
         int index ;
         int max = finalCodeList.size();
-        String buffer = ";C0 final code implements with much love\n";
+        String buffer = ";C0 Final Code\n";
         String line = "                        ";
         Quadruple temp;
         String op;
         for (index = 0; index < max-1; index++) {
-            System.out.println(index);
             temp = finalCodeList.get(index);
-            System.out.println(temp.getOperation());
             op = temp.getOperation().toString();
             if (temp.getOperation().equals("CARGAR_DIRECCION")){
                 buffer+=(line+"MOVE /"+temp.getOperand1()+" , /"+temp.getResult()+"\n");
