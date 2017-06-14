@@ -53,7 +53,7 @@ String         = \"([\x20-\x21\x23-\xFE])*\"
 "while"         { return symbol(sym.WHILE); }
 "putw"          { return symbol(sym.PUTW); }
 "puts"          { return symbol(sym.PUTS); }
-"int"           { return symbol(sym.INT); }
+"int"           { return symbol(sym.INTWORD); }
 "break"         { return symbol(sym.BREAK); }
 {String}        { return symbol(sym.STRING, yytext()); }
 {Letter}({Letter}|{Digit})*     { return symbol(sym.ID, yytext()); }

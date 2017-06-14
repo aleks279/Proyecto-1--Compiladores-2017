@@ -45,16 +45,12 @@ public class Compiler {
             
             try {
                 Yylex lexer = new Yylex(new StringReader(this.program));
-                 parser p =new parser(lexer);
+                 parser p = new parser(lexer);
                  Object result = p.parse().value;
             } catch (Exception ex2) {
                 System.out.print(ex2);
             }
-            while (true) {
-                String st = this.program;
-                parser p = new parser(new Yylex(new StringReader(st)));
-                Symbol s = p.parse();
-            }
+            
         }
         catch (Exception e) {
             System.out.println("Parsing error. ");

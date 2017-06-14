@@ -13,7 +13,7 @@ import java.util.*;
 public class CICode {
     public static String intermediateCode;
     public static ArrayList<Quadruple> finalCodeList = new ArrayList<Quadruple> ();
-    
+    public static ArrayList<String> stringList = new ArrayList<String>();
     public static void listenCode(){
         intermediateCode = "";
         
@@ -25,9 +25,15 @@ public class CICode {
         intermediateCode+= quadruple.toString();
     }
     
+    public static void generateStrings(){
+        //jasdkfaksf
+    }
+
     public static void closeIC(){
         // file writer and code generations
         // new file writer 
         System.out.println(intermediateCode);
+        //call final code generation
+        
     }
 }

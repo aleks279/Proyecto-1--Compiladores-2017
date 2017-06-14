@@ -199,7 +199,7 @@ action code {:
 
 terminal PLUS, MINUS, MUL, DIV, ASSIGN;
 terminal GREATER, LESS, EQUAL, UNEQUAL;
-terminal AND, OR, MAIN, PUTW, PUTS;
+terminal AND, OR, MAIN, PUTW, PUTS, INTWORD;
 terminal IF, ELSE, WHILE, BREAK;
 terminal LPAREN, RPAREN, LBRACE, RBRACE, SEMICOLON;
 
@@ -233,20 +233,19 @@ start with Program;
 
 Program ::= {:
                 initialize();
-                CICode.printy();
+                
             :}
             Assigns Body | Body;
 
 Assigns ::= Assigns Declaration | Declaration;
 
-Declaration ::= INT ID:id SEMICOLON {:
-                symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
-                if(SymTable.insert(id, sym)) {
-                    // insertar codigo para codigo intermedio aqui
-CICode.printy();
+Declaration ::= INTWORD ID:id SEMICOLON {:
+                if(!SymTable.existSymbol(String.valueOf(id))){
+                    SymbolT sym = new SymbolT(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
+                    SymTable.insert(id, sym);
                 } else {
-                    // error code here
-CICode.printy();
+                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+                    ERRORS.report(ERRORS.REPEATED_SYMBOL,line);
                 }
             :};
 
@@ -276,13 +275,7 @@ Expression ::= Expression:e1 PLUS Expression:e2 {:
                 RESULT= integer(e);
             :} |
             ID:id {:
-                symTable.Symbol sym = new symTable.Symbol(id, types.Type.getType(types.Type.INTEGER), false, --addressCounter);
-                if(SymTable.insert(id, sym)) {
-                    RESULT = id(id);
-                } else {
-                    // error code here
-                    RESULT = id("null");
-                }
+                
             :} |
             LPAREN Expression:e RPAREN {:
                 RESULT= e;
@@ -344,6 +337,12 @@ SentWhile ::= WHILE LPAREN {:
             :};
 
 SentAssign ::= ID:id {:
+                if(SymTable.existSymbol(String.valueOf(id))){
+                    
+                } else {
+                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+                    ERRORS.report(ERRORS.UNDECLARED_SYM,line);
+                }
             :} ASSIGN Expression:e SEMICOLON {:
                 assign(id,e);
             :};
