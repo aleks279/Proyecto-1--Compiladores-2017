@@ -25,11 +25,13 @@ action code {:
         CICode.finalCodeList.clear();
         CICode.stringList.clear();
         //
+
         ifCounter=0;
         whileCounter=0;
         printCounter = 0;
         loopCounter = 0;
         pile = new Stack<Integer> ();
+        loopPile = new Stack<Integer> ();
     }
 
     Expression plus(Expression e1, Expression e2){
@@ -267,7 +269,6 @@ Body ::= MAIN LPAREN RPAREN LBRACE SentenceBlock {:
                 endProgram();
                 CICode.generateStrings();
                 CICode.closeIC();
-                //ERRORS.report(CICode.finalCodeList.toString(),1);
                 FinalCode.generateFinalCode();
             :} RBRACE;
 
@@ -373,6 +374,12 @@ SentPuts ::= PUTS LPAREN STRING:s {:
             :} RPAREN SEMICOLON;
 
 SentBreak ::= BREAK {:
+                if(whileCounter>0) {
+                    
+                } else {
+                    int line = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top)).left;
+                    ERRORS.report(ERRORS.BREAK_OUT_OF_PLACE,line);
+                }
             :} SEMICOLON;
 
 Sentence ::=    SentIf |

@@ -20,10 +20,10 @@ public class FinalCode {
         int index ;
         int max = finalCodeList.size();
         String buffer = ";C0 Final Code\n";
-        String line = "                        ";
+        String line = "                                         ";
         Quadruple temp;
         String op;
-        for (index = 0; index < max-1; index++) {
+        for (index = 0; index < max; index++) {
             temp = finalCodeList.get(index);
             op = temp.getOperation().toString();
             if (temp.getOperation().equals("CARGAR_DIRECCION")){
@@ -85,24 +85,33 @@ public class FinalCode {
                 buffer+=(line+"BR $3"+"\n");
                 buffer+=(line+"MOVE #1 , /"+temp.getResult()+"\n");
             }
-            else if (temp.getOperation().equals("FIN")){
-                buffer+=(line+"\n");
+            else if (temp.getOperation().equals("ETIQUETA")){
+                String subLine = temp.getResult()+":"+line;
+                buffer+=(subLine.substring(0, line.length())+" NOP\n");
             }
-//            else if (temp.getOperation().equals(" ")){
-//                buffer+=(line+"\n");
-//            }
-//            else if (temp.getOperation().equals(" ")){
-//                buffer+=(line+"\n");
-//            }
-//            else if (temp.getOperation().equals(" ")){
-//                buffer+=(line+"\n");
-//            }
-//            else if (temp.getOperation().equals(" ")){
-//                buffer+=(line+"\n");
-//            }
-            
+            else if (temp.getOperation().equals("SALTAR_CONDICION")){
+                buffer+=(line+"CMP #0 , /"+temp.getOperand1()+"\n");
+                buffer+=(line+"BZ /"+temp.getResult()+"\n");
+            }
+            else if (temp.getOperation().equals("SALTAR_ETIQUETA")){
+                buffer+=(line+"BR /"+temp.getResult()+"\n");
+            }
+            else if (temp.getOperation().equals("IMPRIMIR_ENTERO")){
+                buffer+=(line+"WRINT /"+temp.getOperand1()+"\n");
+            }
+            else if (temp.getOperation().equals("IMPRIMIR_ENTERO")){
+                buffer+=(line+"WRSTR /"+temp.getOperand1()+"\n");
+            }
+            else if (temp.getOperation().equals("PONER_CADENA")){
+                String subLine = temp.getOperand1()+":"+line;
+                
+                buffer+=(subLine.substring(0, line.length())+"DATA        "+temp.getResult()+"\n");
+            }
+            else if (temp.getOperation().equals("FIN")){
+                buffer+=(line+"HALT\n");
+            }            
         }
-        System.out.println(buffer);
+        writeFile(buffer);
     }
     public static void writeFile(String finalCode){
         try{

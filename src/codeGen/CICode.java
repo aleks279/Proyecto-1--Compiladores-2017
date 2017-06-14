@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package codeGen;
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,7 +20,6 @@ public class CICode {
     public static ArrayList<String> stringList = new ArrayList<String>();
     public static void listenCode(){
         intermediateCode = "";
-        
     }
     
     public static void saveCode(String val, String exp1, String exp2, String result){
@@ -29,23 +29,29 @@ public class CICode {
     }
     
     public static void generateStrings(){
-        //jasdkfaksf
+        int max = stringList.size();
+        int index;
+        int counter = 1;
+        for (index = 0; index < max; index++) {
+            Quadruple quadruple = new Quadruple("PONER_CADENA", "CADENA_"+String.valueOf(counter),"null" , stringList.get(index));
+            counter++;
+            finalCodeList.add(quadruple);
+        }
     }
 
     public static void closeIC(){
-//        try{
-//            FileWriter writer = new FileWriter("CodeIntermediate.CI");
-//            BufferedWriter buffer = new BufferedWriter(writer);
-//            buffer.write(intermediateCode);
-//
-//            buffer.close();
-//            writer.close();
-//            
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//        }
-        System.out.println(intermediateCode);
+        try{
+            FileWriter writer = new FileWriter("CodeIntermediate.CI");
+            BufferedWriter buffer = new BufferedWriter(writer);
+            buffer.write(intermediateCode);
+
+            buffer.close();
+            writer.close();
+            
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         
     }
 }
