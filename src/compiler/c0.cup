@@ -277,7 +277,7 @@ Expression ::= Expression:e1 PLUS Expression:e2 {:
                 RESULT= integer(e);
             :} |
             ID:id {:
-                
+                RESULT = id(id);
             :} |
             LPAREN Expression:e RPAREN {:
                 RESULT= e;
